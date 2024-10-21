@@ -14,20 +14,19 @@
                 <select name="customer_id" class="border border-gray-300 p-2 w-1/3" required>
                     <option value="" disabled selected>Selecione um Cliente</option>
                     @foreach ($customers as $customer)
-                        <option value="{{ $customer->id }}">{{ $customer->name }}--{{ $customer->document }}</option>
+                        <option value="{{ $customer->id }}">
+                            {{ $customer->name }}{{ ' ' }}({{ $customer->document }})</option>
                     @endforeach
                 </select>
-
                 <select id="productSelect" class="border border-gray-300 p-2 w-1/3">
                     <option value="" disabled selected>Selecione um Produto</option>
                     @foreach ($products as $product)
                         <option value="{{ $product->id }}" data-price="{{ $product->price }}">
-                            {{ $product->name }}--ID:{{ $product->id }}
+                            {{ $product->name }}{{ ' -- ' }}Id:{{ $product->id }}
                         </option>
                     @endforeach
                 </select>
-
-                <input type="number" id="quantityInput" min="1" placeholder="Quantidade"
+                <input type="number" id="quantityProductSelected" min="1" placeholder="Quantidade"
                     class="border border-gray-300 p-2 w-1/6" />
                 <button type="button" id="addButton" class="bg-blue-600 text-white p-2">Adicionar</button>
             </div>
@@ -141,8 +140,8 @@
         document.getElementById('addButton').addEventListener('click', function() {
             const productSelect = document.getElementById('productSelect');
             const selectedOption = productSelect.options[productSelect.selectedIndex];
-            const quantityInput = document.getElementById('quantityInput');
-            const quantity = parseInt(quantityInput.value);
+            const quantityProductSelected = document.getElementById('quantityProductSelected');
+            const quantity = parseInt(quantityProductSelected.value);
 
             if (selectedOption.value && quantity > 0) {
                 const productName = selectedOption.text;
@@ -173,7 +172,7 @@
                 // console.log(itemsInput.value)
                 // limpa os campos
                 productSelect.selectedIndex = 0;
-                quantityInput.value = '';
+                quantityProductSelected.value = '';
             } else {
                 alert('Por favor, selecione um produto e insira uma quantidade válida.');
             }
