@@ -21,11 +21,12 @@
             <tbody>
                 <tr>
                     <td class="py-2 px-4 border-b text-center">{{ $saleOrderItems[0]->id }}</td>
-                    <td class="py-2 px-4 border-b">{{ $saleOrderItems[0]->salesOrder->user->name }}</td>
+                    <td class="py-2 px-4 border-b text-center">{{ $saleOrderItems[0]->salesOrder->user->name }}</td>
                     <td class="py-2 px-4 border-b text-center">{{ $saleOrderItems[0]->salesOrder->customer->name }}</td>
                     <td class="py-2 px-4 border-b text-center">{{ $saleOrderItems[0]->salesOrder->paymentType->name }}
                     </td>
-                    <td class="py-2 px-4 border-b text-center">{{ $saleOrderItems[0]->salesOrder->total_amount }}</td>
+                    <td class="py-2 px-4 border-b text-center">
+                        R${{ number_format($saleOrderItems[0]->salesOrder->total_amount, 2, ',', '.') }}</td>
                 </tr>
             </tbody>
         </table>
@@ -38,8 +39,8 @@
                 <tr>
                     <th class="py-2 px-4 border-b">ID</th>
                     <th class="py-2 px-4 border-b">Produto</th>
-                    <th class="py-2 px-4 border-b">Preço</th>
                     <th class="py-2 px-4 border-b">Quantidade</th>
+                    <th class="py-2 px-4 border-b">Preço</th>
                 </tr>
             </thead>
             <tbody>
@@ -48,8 +49,9 @@
 
                         <td class="py-2 px-4 border-b text-center">{{ $saleOrderItem->id }}</td>
                         <td class="py-2 px-4 border-b text-center">{{ $saleOrderItem->product->name }}</td>
-                        <td class="py-2 px-4 border-b text-center">{{ $saleOrderItem->price }}</td>
                         <td class="py-2 px-4 border-b text-center">{{ $saleOrderItem->quantity }}</td>
+                        <td class="py-2 px-4 border-b text-center">
+                            R${{ number_format($saleOrderItem->price, 2, ',', '.') }}</td>
                     </tr>
                 @endforeach
             </tbody>
@@ -61,9 +63,9 @@
             <thead>
                 <tr>
                     <th class="py-2 px-4 border-b">ID</th>
-                    <th class="py-2 px-4 border-b">installment_number</th>
-                    <th class="py-2 px-4 border-b">amount</th>
-                    <th class="py-2 px-4 border-b">due_date</th>
+                    <th class="py-2 px-4 border-b">Parcelas</th>
+                    <th class="py-2 px-4 border-b">valor</th>
+                    <th class="py-2 px-4 border-b">Data de Vencimento</th>
                 </tr>
             </thead>
             <tbody>
@@ -71,10 +73,14 @@
                     <tr>
                         <td class="py-2 px-4 border-b text-center">{{ $installment->id }}</td>
                         <td class="py-2 px-4 border-b text-center">{{ $installment->installment_number + 1 }}</td>
-                        <td class="py-2 px-4 border-b text-center">{{ $installment->amount }}</td>
-                        <td class="py-2 px-4 border-b text-center">{{ $installment->due_date }}</td>
+                        <td class="py-2 px-4 border-b text-center">
+                            R${{ number_format($installment->amount, 2, ',', '.') }}</td>
+                        <td class="py-2 px-4 border-b text-center">
+                            {{ date('d/m/y', strtotime($installment->due_date)) }}</td>
                     </tr>
                 @endforeach
+
+
             </tbody>
         </table>
 

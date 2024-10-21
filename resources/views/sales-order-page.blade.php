@@ -78,8 +78,8 @@
     <div class="container mx-auto p-4">
         <form method="GET" action="{{ route('sales_orders.search') }}" class="w-full ">
             @csrf
-            <input type="text" name="sales_orders_id" placeholder="Pesquisar "
-                class="border border-gray-300 p-2 mb-4 w-4/6" required />
+            <input type="text" name="   " placeholder="Pesquisar " class="border border-gray-300 p-2 mb-4 w-4/6"
+                required />
             <button type="submit" class="bg-green-600 text-white p-2 mt-4 w-1/6">Procurar Pedido</button>
         </form>
 
@@ -101,12 +101,13 @@
                     <tr>
                         <td class="py-2 px-4 border-b text-center">{{ $saleOrder['id'] }}</td>
                         <td class="py-2 px-4 border-b">{{ $saleOrder['user']->name }}</td>
-                        <td class="py-2 px-4 border-b text-center">{{ $saleOrder['customer']->name }}</td>
+                        <td class="py-2 px-4 border-b ">{{ $saleOrder['customer']->name }}</td>
                         <td class="py-2 px-4 border-b text-center">{{ $saleOrder['paymentType']->name }}</td>
-                        <td class="py-2 px-4 border-b text-center">{{ $saleOrder['total_amount'] }} </td>
+                        <td class="py-2 px-4 border-b text-center">
+                            R${{ number_format($saleOrder['total_amount'], 2, ',', '.') }} </td>
 
-                        <td>
-                            <a href="{{ route('sales_orders.show', $saleOrder->id) }}"
+                        <td class="py-2 px-4 border-b text-center">
+                            <a href="{{ route('sales_orders.show', $saleOrder->id) }}"s
                                 class="text-blue-600 hover:underline">View</a> |
 
                             <a href="{{ route('sales_orders.edit', $saleOrder->id) }}"

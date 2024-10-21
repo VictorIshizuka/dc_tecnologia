@@ -51,15 +51,22 @@ class SalesOrderController extends Controller
         // ]);
 
         // dd($installments);
-        $saleOrderItems = SalesOrderItem::with(['salesOrder', 'product'])->find($request->sales_orders_id);
-        if (!$saleOrderItems) {
-            return redirect()->back()->with('error', 'Pedido não encontrado.');
-        }
+        $search = $request->input('sales_orders_search');
+        dd($search);
 
-        $installments = Installment::with(['salesOrder'])->find($request->sales_orders_id);
+        // $sales_orders =   SalesOrder::query()
+        //     ->where('title', 'LIKE', "%{$search}%")
+        //     ->orWhere('body', 'LIKE', "%{$search}%")
+        //     ->get();
+        // $saleOrderItems = SalesOrderItem::with(['salesOrder', 'product'])->find($request->sales_orders_id);
+        // if (!$saleOrderItems) {
+        //     return redirect()->back()->with('error', 'Pedido não encontrado.');
+        // }
+
+        // $installments = Installment::with(['salesOrder'])->find($request->sales_orders_id);
 
 
-        return view('sales-order-show', compact('saleOrderItems', 'installments'));
+        // return view('sales-order-show', compact('saleOrderItems', 'installments'));
     }
 
     public function show($id)
@@ -75,17 +82,16 @@ class SalesOrderController extends Controller
     public function store(Request $request)
     {
 
-        dd($request);
         $itemsArray = json_decode($request->items, true);
         $installmentsArray = json_decode($request->installments, true);
 
-
+        // dd($request->all());
 
         $salesOrder = SalesOrder::create([
             'customer_id' => $request->customer_id,
             'user_id' => auth()->id(),
             'payment_type_id' => $request->payment_type,
-            'total_amount' => $request->installments_count,
+            'total_amount' => $itemsArray[0]['price'] * $itemsArray[0]['quantity'],
         ]);
 
 
@@ -104,6 +110,23 @@ class SalesOrderController extends Controller
 
             $salesOrder->total_amount += $total;
         }
+
+        if (count($installmentsArray) === 0) {
+            $total = $itemsArray[0]['price'] * $itemsArray[0]['quantity'];
+            // dd($salesOrder);
+
+
+            Installment::create([
+                'sales_order_id' => $salesOrder->id,
+                'installment_number' => 1,
+                'amount' => $total,
+                'due_date' => date("Y/m/d H:i:s")
+            ]);
+
+            $salesOrder->save();
+            return redirect()->route('sales_orders.home')->with('success', 'Pedido criado com sucesso.');
+        }
+
         foreach ($installmentsArray as $installment => $value) {
             $newString = explode('/', $value['due_date']);
 
@@ -118,6 +141,8 @@ class SalesOrderController extends Controller
                 'due_date' => date_format($date, "Y/m/d H:i:s")
             ]);
         }
+
+
 
 
         $salesOrder->save();

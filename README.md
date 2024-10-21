@@ -9,6 +9,23 @@
 - Tipos de pagamento
 
 
+### Ajuste principais FALTA
+- atualizar pedido de venda
+- remover pedido de venda
+- pesquisar por pedido de venda
+- gerar pdf do pedido de venda
+- envio de senha por email
+- correção de erros dos campos e validaçao
+- corrigir sanitizadores e mascaras
+- authenticação via token
+- perfil do usuario (vendedor)
+- crud de vendedores (podendo gerar niveis maiores de permisao para ter acesso ao crud de usuarios(vendedores))
+- adiconar nivel de permisao basico 
+- paginação em cada tabela
+- deploy
+- arrumar codigo com o tempo
+
+
 
 ### Erros fortes
 - para cadastrar pedido no momento ele deve ter o numero de parcelas min:1, pois os outros pagamentos falta configurar como parcela um  de forma automática

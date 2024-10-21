@@ -65,7 +65,7 @@
                 @foreach ($products as $product)
                     <tr>
                         <td class="py-2 px-4 border-b text-center">{{ $product['id'] }}</td>
-                        <td class="py-2 px-4 border-b">{{ $product['name'] }}</td>
+                        <td class="py-2 px-4 border-b ">{{ $product['name'] }}</td>
                         <td class="py-2 px-4 border-b text-center">{{ number_format($product['stock'], 0, ',', '.') }}
                         </td>
                         <td class="py-2 px-4 border-b text-center">R$
