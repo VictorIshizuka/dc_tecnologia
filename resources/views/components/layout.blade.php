@@ -29,7 +29,7 @@
             if (successMessage) {
                 successMessage.style.display = 'none';
             }
-        }, 5000); // 5 segundos
+        }, 5000);
     });
 </script>
 

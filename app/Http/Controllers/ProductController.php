@@ -5,12 +5,18 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CreateProductRequest;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ProductController extends Controller
 {
 
     public function index(Request $request)
     {
+
+        if (!Auth::check()) {
+            return redirect()->route('login');
+        }
+
         $products = Product::all();
         $productToEdit = null;
 
@@ -24,6 +30,7 @@ class ProductController extends Controller
             'productToEdit' => $productToEdit
         ]);
     }
+
 
     public function store(CreateProductRequest $r)
     {
@@ -43,7 +50,7 @@ class ProductController extends Controller
             'id' => $id
         ]);
     }
-    public function update(CreateProductRequest $r, $id)
+    public function update(Request $r, $id)
     {
 
         $data = $r->only(['name', 'stock', 'price']);

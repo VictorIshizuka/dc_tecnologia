@@ -7,16 +7,40 @@
             @if (isset($productToEdit))
                 @method('PUT')
             @endif
-            <div class="flex space-x-2 justify-center">
-                <input type="text" name="name" value="{{ isset($productToEdit) ? $productToEdit->name : '' }}"
-                    placeholder="Nome do Produto" class="border border-gray-300 p-2 w-1/3" required />
-                <input type="text" name="price" value="{{ isset($productToEdit) ? $productToEdit->price : '' }}"
-                    placeholder="Valor do Produto" class="border border-gray-300 p-2 w-1/5" required />
-                <input type="text" name="stock" value="{{ isset($productToEdit) ? $productToEdit->stock : '' }}"
-                    placeholder="Quantidade do Produto" class="border border-gray-300 p-2 w-1/5" required />
-                <button type="submit" class="bg-blue-600 text-white p-2">
-                    {{ isset($productToEdit) ? 'Atualizar' : 'Adicionar' }}
-                </button>
+
+            <div class="flex space-x-2">
+                <div class="flex flex-col w-1/3">
+                    <input type="text" name="name"
+                        value="{{ old('name', isset($productToEdit) ? $productToEdit->name : '') }}"
+                        placeholder="Nome do Produto" class="border border-gray-300 p-2 w-full" required />
+                    @error('name')
+                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+                <div class="flex flex-col w-1/5">
+                    <input type="number" name="price" step="0.01"
+                        value="{{ old('price', isset($productToEdit) ? $productToEdit->price : '') }}"
+                        placeholder="Valor do Produto" class="border border-gray-300 p-2 w-full" required
+                        inputmode="decimal" />
+                    @error('price')
+                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+                <div class="flex flex-col w-1/5">
+                    <input type="number" name="stock"
+                        value="{{ old('stock', isset($productToEdit) ? $productToEdit->stock : '') }}"
+                        placeholder="Quantidade do Produto" class="border border-gray-300 p-2 w-full" required
+                        inputmode="numeric" />
+                    @error('stock')
+                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div class="flex items-end">
+                    <button type="submit" class="bg-blue-600 text-white p-2">
+                        {{ isset($productToEdit) ? 'Atualizar' : 'Adicionar' }}
+                    </button>
+                </div>
             </div>
         </form>
         @if (session('success'))
@@ -42,10 +66,17 @@
                     <tr>
                         <td class="py-2 px-4 border-b text-center">{{ $product['id'] }}</td>
                         <td class="py-2 px-4 border-b">{{ $product['name'] }}</td>
-                        <td class="py-2 px-4 border-b text-center">{{ $product['stock'] }}</td>
-                        <td class="py-2 px-4 border-b text-center">{{ $product['price'] }}</td>
-                        <td class="py-2 px-4 border-b text-center">{{ $product['stock'] * $product['price'] }}</td>
+                        <td class="py-2 px-4 border-b text-center">{{ number_format($product['stock'], 0, ',', '.') }}
+                        </td>
+                        <td class="py-2 px-4 border-b text-center">R$
+                            {{ number_format($product['price'], 2, ',', '.') }}</td>
+                        <td class="py-2 px-4 border-b text-center">R$
+                            {{ number_format($product['stock'] * $product['price'], 2, ',', '.') }}</td>
                         <td class="py-2 px-4 border-b text-center">
+
+
+
+
                             <a href="{{ route('products.edit', $product->id) }}"
                                 class="text-blue-600 hover:underline">Editar</a> |
                             <form action="{{ route('products.destroy', $product->id) }}" method="POST"

@@ -26,6 +26,7 @@ class CustomerController extends Controller
 
     public function store(CreateCustomerRequest $r)
     {
+
         $data = $r->only(['name', 'document', 'email', 'phone']);
         Customer::create($data);
 
@@ -48,7 +49,7 @@ class CustomerController extends Controller
         $data = $r->only(['name', 'document', 'email', 'phone']);
         $customer = Customer::findOrFail($id);
         $customer->update($data);
-        $customer = Customer::all();
+        // $customer = Customer::all();
         return redirect()->route('customers.home')->with('success', 'Cliente atualizado com sucesso.');
     }
     //
