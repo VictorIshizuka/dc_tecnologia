@@ -42,6 +42,7 @@
                     </tr>
                 </thead>
                 <tbody>
+
                     <!-- Iadiciona os dados pelo js (NAO ACHEI UMA FORMA MELHOR E ACHEI VERBOSO DEMAIS, MAS JA ESTOU ESTUDANDO PARA MELHORAR ISSO)-->
                 </tbody>
             </table>
@@ -59,14 +60,14 @@
                 @endforeach
             </select>
             <div id="installmentsSection" style="display: none;">
-                <h3 class="text-xl mb-2">Parcelas:</h3>
-                <label for="installmentsCount" class="mb-2">Número de Parcelas:</label>
+                <label id="installmentNumber-label" for="installmentsDay" class="text-xl mb-2">Dia das
+                    Parcelas:</label>
+                <input type="text" id="installmentNumber" placeholder="Selecione o dia da Parcelas"
+                    class="installmentNumber border border-gray-300 p-2 mb-4 w-1/3" name="" />
+                <h4 class="text-xl mb-2">Numero de Parcelas:</h4>
                 <input type="number" id="installmentsCount" name="installments_count" min="1"
-                    class="border border-gray-300 p-2 mb-4 w-1/4" />
+                    class="border border-gray-300 p-2 mb-4 w-1/3" />
 
-                <label id="installmentNumber-label" for="installmentsDay" class="mb-2">Dia das Parcelas:</label>
-                <input type="text" id="installmentNumber" placeholder="Procure pelo produto"
-                    class="installmentNumber border border-gray-300 p-2 mb-4 w-1/4" name="" />
 
                 <div id="installmentsList"></div>
             </div>
@@ -75,10 +76,11 @@
         </form>
     </div>
     <div class="container mx-auto p-4">
-        <form method="GET" action="{{ route('sales_orders.search') }}">
+        <form method="GET" action="{{ route('sales_orders.search') }}" class="w-full ">
             @csrf
-            <input type="text" name="sales_orders_id" class="border border-gray-300 p-2 mb-4 w-1/4" required />
-            <button type="submit" class="bg-green-600 text-white p-2 mt-4">Procurar Pedido</button>
+            <input type="text" name="sales_orders_id" placeholder="Pesquisar "
+                class="border border-gray-300 p-2 mb-4 w-4/6" required />
+            <button type="submit" class="bg-green-600 text-white p-2 mt-4 w-1/6">Procurar Pedido</button>
         </form>
 
         <table class="min-w-full bg-white border border-gray-200">
@@ -104,7 +106,7 @@
                         <td class="py-2 px-4 border-b text-center">{{ $saleOrder['total_amount'] }} </td>
 
                         <td>
-                            <a href="{{ route('sales_orders.search', $customer->id) }}"
+                            <a href="{{ route('sales_orders.show', $saleOrder->id) }}"
                                 class="text-blue-600 hover:underline">View</a> |
 
                             <a href="{{ route('sales_orders.edit', $saleOrder->id) }}"
@@ -133,6 +135,7 @@
         const installmentsCountInput = document.getElementById('installmentsCount');
         const installmentsList = document.getElementById('installmentsList');
         const labelDateinstallment = document.getElementById('installmentNumber-label');
+        const DateinstallmentInput = document.getElementById('installmentNumber');
         const installments = document.getElementById('installments');
         let totalAmount = 0;
         let items = [];
@@ -151,10 +154,10 @@
                 // adiciona uma nova linha na tabela DEVERIA
                 const newRow = orderTable.insertRow();
                 newRow.innerHTML = `
-                        <td class="py-2 px-4 border-b">${productName}</td>
-                        <td class="py-2 px-4 border-b">${quantity}</td>
-                        <td class="py-2 px-4 border-b">${price.toFixed(2)}</td>
-                        <td class="py-2 px-4 border-b">${total.toFixed(2)}</td>
+                        <td class="py-2 px-4 border-b text-center">${productName}</td>
+                        <td class="py-2 px-4 border-b text-center">${quantity}</td>
+                        <td class="py-2 px-4 border-b text-center">${price.toFixed(2)}</td>
+                        <td class="py-2 px-4 border-b text-center">${total.toFixed(2)}</td>
                     `;
 
                 // atualiza o total geral
@@ -181,7 +184,7 @@
 
 
 
-            console.log(installmentsCountInput)
+            console.log(installmentsCountInput.value)
             if (this.value == "1") {
                 installmentNumber.style.display = "block"
                 labelDateinstallment.style.display = "flex"
@@ -241,31 +244,29 @@
 
 
         installmentsCountInput.addEventListener('input', function() {
-            // console.log('hapen')
             const count = parseInt(this.value);
             installmentsList.innerHTML = '';
             let newDate = new Date(new Date());
             let dateArray = [];
             const teste = paymentType.value === '6';
+            const fixedDay = DateinstallmentInput.value;
+
             if (count > 0) {
                 const installmentAmount = (totalAmount / count).toFixed(2);
                 let installmentInput = 0;
-                console.log('hapen')
+
                 for (let i = 1; i <= count; i++) {
 
-
                     newDate.setMonth(newDate.getMonth() + 1);
+                    newDate.setDate(fixedDay);
                     installmentsList.innerHTML += `
-                    <div class="mb-2 flex">
-                        <p>Parcela ${i}:</p>
-                        <input type="text"  name="installmentValue${i}" class="installment-amount" value="R$ ${installmentAmount}" />
-                        <input type="text"  name="installmentDueDate${i}" value="${newDate.toLocaleDateString()}" ${teste ? '' : 'disabled'} />
-                    </div>
-                `;
-
-
+                <div class="mb-2 flex">
+                    <p>Parcela ${i}: </p>
+                    <input type="text" name="installmentValue${i}" class="installment-amount" value="R$ ${installmentAmount}" />
+                    <input type="text" name="installmentDueDate${i}" value="${newDate.toLocaleDateString()}" ${teste ? '' : 'disabled'} />
+                </div>
+            `;
                 }
-                console.log(installmentInput)
             }
         });
         // função para pegar as parcelas e datas de vencimento DEVERIA

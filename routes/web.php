@@ -45,6 +45,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/', [SalesOrderController::class, 'index'])->name('sales_orders.home');
         Route::post('/', [SalesOrderController::class, 'store'])->name('sales_orders.store');
         Route::get('/search', [SalesOrderController::class, 'search'])->name('sales_orders.search');
+        Route::get('/show/{id}', [SalesOrderController::class, 'show'])->name('sales_orders.show');
         Route::get('{id}/edit', [SalesOrderController::class, 'edit'])->name('sales_orders.edit');
         Route::put('{id}', [SalesOrderController::class, 'update'])->name('sales_orders.update');
         Route::delete('{id}', [SalesOrderController::class, 'destroy'])->name('sales_orders.destroy');

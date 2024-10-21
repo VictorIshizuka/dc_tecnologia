@@ -46,10 +46,9 @@ class SalesOrderController extends Controller
 
     public function search(Request $request)
     {
-
-        $request->validate([
-            'sales_orders_id' => 'required|integer|exists:sales_orders,id',
-        ]);
+        // $request->validate([
+        //     'sales_orders_id' => 'required|integer|exists:sales_orders,id',
+        // ]);
 
         // dd($installments);
         $saleOrderItems = SalesOrderItem::with(['salesOrder', 'product'])->find($request->sales_orders_id);
@@ -62,9 +61,21 @@ class SalesOrderController extends Controller
 
         return view('sales-order-show', compact('saleOrderItems', 'installments'));
     }
+
+    public function show($id)
+    {
+        $saleOrderItems = SalesOrderItem::with(['salesOrder', 'product'])
+            ->where('sales_order_id', $id)
+            ->get();
+
+        $installments = Installment::where('sales_order_id', '=', $id)->get();
+        return view('sales-order-show', ['saleOrderItems' => $saleOrderItems, 'installments' => $installments]);
+    }
+
     public function store(Request $request)
     {
 
+        dd($request);
         $itemsArray = json_decode($request->items, true);
         $installmentsArray = json_decode($request->installments, true);
 

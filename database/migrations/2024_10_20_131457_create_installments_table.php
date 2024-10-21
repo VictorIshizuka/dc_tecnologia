@@ -12,7 +12,7 @@ return new class extends Migration
         Schema::create('installments', function (Blueprint $table) {
             $table->id();
             $table->foreignId('sales_order_id')->constrained('sales_orders');
-            $table->integer('installment_number');
+            $table->integer('installment_number')->default(1);
             $table->decimal('amount', 10, 2);
             $table->date('due_date');
             $table->timestamps();

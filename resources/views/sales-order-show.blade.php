@@ -20,19 +20,20 @@
             </thead>
             <tbody>
                 <tr>
-                    <td class="py-2 px-4 border-b text-center">{{ $saleOrderItems->salesOrder->id }}</td>
-                    <td class="py-2 px-4 border-b">{{ $saleOrderItems->salesOrder->user->name }}</td>
-                    <td class="py-2 px-4 border-b text-center">{{ $saleOrderItems->salesOrder->customer->name }}</td>
-                    <td class="py-2 px-4 border-b text-center">{{ $saleOrderItems->salesOrder->paymentType->name }}
+                    <td class="py-2 px-4 border-b text-center">{{ $saleOrderItems[0]->id }}</td>
+                    <td class="py-2 px-4 border-b">{{ $saleOrderItems[0]->salesOrder->user->name }}</td>
+                    <td class="py-2 px-4 border-b text-center">{{ $saleOrderItems[0]->salesOrder->customer->name }}</td>
+                    <td class="py-2 px-4 border-b text-center">{{ $saleOrderItems[0]->salesOrder->paymentType->name }}
                     </td>
-                    <td class="py-2 px-4 border-b text-center">{{ $saleOrderItems->salesOrder->total_amount }}</td>
+                    <td class="py-2 px-4 border-b text-center">{{ $saleOrderItems[0]->salesOrder->total_amount }}</td>
                 </tr>
             </tbody>
         </table>
         <br>
         <hr />
         <br>
-        <table class="w-50 bg-white border border-gray-100">
+        <h4 class="text-3xl font-semibold mb-4">Produtos do pedido de venda</h4>
+        <table class="min-w-full bg-white border border-gray-200">
             <thead>
                 <tr>
                     <th class="py-2 px-4 border-b">ID</th>
@@ -42,12 +43,38 @@
                 </tr>
             </thead>
             <tbody>
+                @foreach ($saleOrderItems as $saleOrderItem)
+                    <tr>
+
+                        <td class="py-2 px-4 border-b text-center">{{ $saleOrderItem->id }}</td>
+                        <td class="py-2 px-4 border-b text-center">{{ $saleOrderItem->product->name }}</td>
+                        <td class="py-2 px-4 border-b text-center">{{ $saleOrderItem->price }}</td>
+                        <td class="py-2 px-4 border-b text-center">{{ $saleOrderItem->quantity }}</td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+        <br>
+        <hr />
+        <h4 class="text-3xl font-semibold mb-4">Parcelas do pedido de venda</h4>
+        <table class="min-w-full bg-white border border-gray-200">
+            <thead>
                 <tr>
-                    <td class="py-2 px-4 border-b text-center">{{ $saleOrderItems->id }}</td>
-                    <td class="py-2 px-4 border-b text-center">{{ $saleOrderItems->product->name }}</td>
-                    <td class="py-2 px-4 border-b">{{ $saleOrderItems->price }}</td>
-                    <td class="py-2 px-4 border-b text-center">{{ $saleOrderItems->quantity }}</td>
+                    <th class="py-2 px-4 border-b">ID</th>
+                    <th class="py-2 px-4 border-b">installment_number</th>
+                    <th class="py-2 px-4 border-b">amount</th>
+                    <th class="py-2 px-4 border-b">due_date</th>
                 </tr>
+            </thead>
+            <tbody>
+                @foreach ($installments as $installment)
+                    <tr>
+                        <td class="py-2 px-4 border-b text-center">{{ $installment->id }}</td>
+                        <td class="py-2 px-4 border-b text-center">{{ $installment->installment_number + 1 }}</td>
+                        <td class="py-2 px-4 border-b text-center">{{ $installment->amount }}</td>
+                        <td class="py-2 px-4 border-b text-center">{{ $installment->due_date }}</td>
+                    </tr>
+                @endforeach
             </tbody>
         </table>
 

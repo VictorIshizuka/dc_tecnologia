@@ -51,6 +51,7 @@
             </tbody>
         </table>
 
+
         <a href="{{ route('sales_orders.store') }}" class="text-blue-600 hover:underline">Voltar para a lista de
             pedidos</a>
     </div>
