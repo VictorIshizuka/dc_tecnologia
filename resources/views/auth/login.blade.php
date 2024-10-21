@@ -10,7 +10,7 @@
 
 <body class="bg-blue-50 flex items-center justify-center min-h-screen">
 
-    <div class="bg-white shadow-md rounded-md p-8 w-96">
+    <div class="bg-gray-200 shadow-md rounded-md p-8 w-96">
         <h2 class="text-2xl font-bold text-center text-blue-600 mb-6">Login</h2>
         @if (session()->has('message'))
             <p class="error text-red-500 text-sm">{{ session('message') }}</p>
