@@ -120,6 +120,7 @@ class SalesOrderController extends Controller
             return $query->whereIn('id', $installments);
         });
 
+
         $salesOrders = $salesOrderQuery->get();
 
         $customers = Customer::all();
@@ -179,8 +180,8 @@ class SalesOrderController extends Controller
             ]);
         }
 
-        if (count($installmentsArray) === 0) {
 
+        if (count($installmentsArray) === 0) {
 
             Installment::create([
                 'sales_order_id' => $salesOrder->id,

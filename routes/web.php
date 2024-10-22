@@ -4,6 +4,7 @@ use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SalesOrderController;
 use App\Http\Controllers\UserController;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 
@@ -20,7 +21,6 @@ Route::get('/logout', [UserController::class, 'logout'])->name('logout');
 
 
 Route::middleware(['auth'])->group(function () {
-    Route::get('/', [ProductController::class, 'index'])->name('products.home');
 
     // Rotas de clientes
     Route::prefix('customers')->group(function () {
@@ -33,6 +33,7 @@ Route::middleware(['auth'])->group(function () {
 
     // Rotas de produtos
     Route::prefix('products')->group(function () {
+        Route::get('/', [ProductController::class, 'index'])->name('products.home');
         Route::post('/', [ProductController::class, 'store'])->name('products.store');
         Route::get('/info', [ProductController::class, 'show'])->name('products.show');
         Route::get('{id}/edit', [ProductController::class, 'edit'])->name('products.edit');

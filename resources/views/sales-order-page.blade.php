@@ -281,7 +281,7 @@
                 let currentValue = parseFloat(inputs[i].value.replace('R$', '').trim()) || 0;
                 let adjustedValue = currentValue + difference;
                 if (adjustedValue >= 0) {
-                    inputs[i].value = `R$ ${adjustedValue.toFixed(2)}`
+                    inputs[i].value = `R$ ${adjustedValue.toFixed(2)}`;
                     break;
                 } else {
                     difference = adjustedValue;
@@ -341,7 +341,7 @@
                     due_date: dueDate
                 });
             }
-
+            console.log(installments)
             // Converte o array de parcelas em uma string JSON (importante)
             return JSON.stringify(installments);
         }
@@ -351,7 +351,7 @@
             const installmentsInput = document.createElement('input');
             installmentsInput.type = 'hidden';
             installmentsInput.name = 'installments'; // campos que devriam ir para o back
-            installmentsInput.value = captureInstallmentsData(); // pegar dados via função
+            installmentsInput.value = getInstallmentsData(); // pegar dados via função
 
             // input hiden adionado no form
             this.appendChild(installmentsInput);
