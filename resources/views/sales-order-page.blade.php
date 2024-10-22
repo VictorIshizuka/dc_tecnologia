@@ -7,6 +7,11 @@
                 {{ session('success') }}
             </div>
         @endif
+        @if (session('erroEdit'))
+            <div class="bg-red-500 text-white p-2 mb-4 text-center">
+                {{ session('erroEdit') }}
+            </div>
+        @endif
 
         <form id="orderForm" method="POST" action="{{ route('sales_orders.store') }}">
             @csrf
@@ -15,14 +20,14 @@
                     <option value="" disabled selected>Selecione um Cliente</option>
                     @foreach ($customers as $customer)
                         <option value="{{ $customer->id }}">
-                            {{ $customer->name }}{{ ' ' }}({{ $customer->document }})</option>
+                            {{ $customer->name }}</option>
                     @endforeach
                 </select>
                 <select id="productSelect" class="border border-gray-300 p-2 w-1/3">
                     <option value="" disabled selected>Selecione um Produto</option>
                     @foreach ($products as $product)
                         <option value="{{ $product->id }}" data-price="{{ $product->price }}">
-                            {{ $product->name }}{{ ' -- ' }}Id:{{ $product->id }}
+                            {{ $product->name }}
                         </option>
                     @endforeach
                 </select>
@@ -39,17 +44,18 @@
                         <th class="py-2 px-4 border-b">Quantidade</th>
                         <th class="py-2 px-4 border-b">Preço Unitário</th>
                         <th class="py-2 px-4 border-b">Total</th>
+                        <th class="py-2 px-4 border-b">Total</th>
                     </tr>
                 </thead>
                 <tbody>
-
                     <!-- Iadiciona os dados pelo js (NAO ACHEI UMA FORMA MELHOR E ACHEI VERBOSO DEMAIS, MAS JA ESTOU ESTUDANDO PARA MELHORAR ISSO)-->
                 </tbody>
             </table>
 
+
             <input type="hidden" name="items" id="itemsInput" value="[]" />
             <div class="flex justify-end mb-4">
-                <strong class="text-xl">Total Geral: R$ <span id="totalAmount">0.00</span></strong>
+                <strong class="text-xl">Total do pedido: R$ <span id="totalAmount">0,00</span></strong>
             </div>
 
             <h3 class="text-xl mb-2">Tipo de Pagamento:</h3>
@@ -75,12 +81,31 @@
             <button type="submit" class="bg-green-600 text-white p-2 mt-4">Salvar Pedido</button>
         </form>
     </div>
-    <div class="container mx-auto p-4">
-        <form method="GET" action="{{ route('sales_orders.search') }}" class="w-full ">
+    <div class="flex flex-wrap	 container mx-auto p-4">
+        <form method="GET" action="{{ route('sales_orders.search') }}" class="w-full flex">
             @csrf
-            <input type="text" name="   " placeholder="Pesquisar " class="border border-gray-300 p-2 mb-4 w-4/6"
-                required />
-            <button type="submit" class="bg-green-600 text-white p-2 mt-4 w-1/6">Procurar Pedido</button>
+            <div>
+                <input type="text" name="sales_order_id" placeholder="Pesquisar por ID"
+                    class="border border-gray-300 p-2 mb-4 w-4/6" />
+                <input type="text" name="sales_order_user" placeholder="Pesquisar por Vendedor"
+                    class="border border-gray-300 p-2 mb-4 w-4/6" />
+                <select id="paymentMethod" name="payment_type" class="border border-gray-300 p-2 mb-4 w-4/6">
+                    <option value="" disabled selected>Pesquisar por pagamento</option>
+                    @foreach ($paymentTypes as $paymentType)
+                        <option value="{{ $paymentType['id'] }}">{{ $paymentType['name'] }}</option>
+                    @endforeach
+                </select>
+
+            </div>
+            <div>
+                <input type="text" name="sales_order_product" placeholder="Pesquisar por Produto"
+                    class="border border-gray-300 p-2 mb-4 w-4/6" />
+                {{-- <input type="text" name="sales_order_installments" placeholder="Pesquisar por Parcelas"
+                    class="border border-gray-300 p-2 mb-4 w-4/6" /> --}}
+                <input type="text" name="sales_order_due_date" placeholder="Pesquisar por Data de Vencimento"
+                    class="border border-gray-300 p-2 mb-4 w-4/6" />
+                <button type="submit" class="bg-green-600 text-white p-2 w-4/6">Pesquisar pedido</button>
+            </div>
         </form>
 
         <table class="min-w-full bg-white border border-gray-200">
@@ -97,7 +122,6 @@
             <tbody>
 
                 @foreach ($sales_orders as $saleOrder)
-                    {{-- dd($sales_orders[0]->customer->name); --}}
                     <tr>
                         <td class="py-2 px-4 border-b text-center">{{ $saleOrder['id'] }}</td>
                         <td class="py-2 px-4 border-b">{{ $saleOrder['user']->name }}</td>
@@ -107,7 +131,10 @@
                             R${{ number_format($saleOrder['total_amount'], 2, ',', '.') }} </td>
 
                         <td class="py-2 px-4 border-b text-center">
-                            <a href="{{ route('sales_orders.show', $saleOrder->id) }}"s
+                            <a href="{{ route('generatePDF', $saleOrder->id) }}"
+                                class="text-blue-600 hover:underline">PDF</a>
+                            |
+                            <a href="{{ route('sales_orders.show', $saleOrder->id) }}"
                                 class="text-blue-600 hover:underline">View</a> |
 
                             <a href="{{ route('sales_orders.edit', $saleOrder->id) }}"
@@ -130,6 +157,7 @@
     <script>
         const orderTable = document.getElementById('orderTable').getElementsByTagName('tbody')[0];
         const totalAmountElement = document.getElementById('totalAmount');
+        const itemsDestroyInput = document.getElementById('itemsDestroyInput');
         const itemsInput = document.getElementById('itemsInput');
         const paymentType = document.getElementById('paymentType');
         const installmentsSection = document.getElementById('installmentsSection');
@@ -141,6 +169,42 @@
         let totalAmount = 0;
         let items = [];
 
+
+        function tableHTML() {
+            totalAmount = 0;
+            orderTable.innerHTML = '';
+            items.forEach((item, index) => {
+                total = item.product.price * item.quantity;
+                const newRow = orderTable.insertRow();
+                newRow.innerHTML = `
+                <td class="py-2 px-4 border-b text-center">
+                    <button type="button" onclick="itemsToDestroy(${index})" class="destroyItems pointer-events-auto text-red-600 hover:underline">Deletar</button>
+                </td>
+                <td class="py-2 px-4 border-b text-center">${item.product.name }</td>
+                <td class="py-2 px-4 border-b text-center">${item.quantity }</td>
+                <td class="py-2 px-4 border-b text-center">${item.product.price.toLocaleString('pt-br',{style: 'currency', currency: 'BRL'}) }</td>
+                <td class="py-2 px-4 border-b text-center">${total.toLocaleString('pt-br',{style: 'currency', currency: 'BRL'})}</td>
+            `
+                totalAmount += total;
+            })
+
+            totalAmountElement.textContent = totalAmount.toLocaleString('pt-br', {
+                style: 'currency',
+                currency: 'BRL'
+            });
+        }
+
+        if (items) {
+            tableHTML();
+        }
+
+        function itemsToDestroy(index) {
+            items.splice(index, 1);
+            console.log(items)
+            tableHTML();
+            itemsInput.value = JSON.stringify(items);
+        }
+
         document.getElementById('addButton').addEventListener('click', function() {
             const productSelect = document.getElementById('productSelect');
             const selectedOption = productSelect.options[productSelect.selectedIndex];
@@ -150,30 +214,23 @@
             if (selectedOption.value && quantity > 0) {
                 const productName = selectedOption.text;
                 const price = parseFloat(selectedOption.getAttribute('data-price'));
-                const total = price * quantity;
 
-                // adiciona uma nova linha na tabela DEVERIA
-                const newRow = orderTable.insertRow();
-                newRow.innerHTML = `
-                        <td class="py-2 px-4 border-b text-center">${productName}</td>
-                        <td class="py-2 px-4 border-b text-center">${quantity}</td>
-                        <td class="py-2 px-4 border-b text-center">${price.toFixed(2)}</td>
-                        <td class="py-2 px-4 border-b text-center">${total.toFixed(2)}</td>
-                    `;
+                //vai adicionar uma nova linha ma tabela
+                items.push({
+                    quantity,
+                    product: {
+                        name: productName,
+                        price
+                    }
+                })
 
                 // atualiza o total geral
-                totalAmount += total;
-                totalAmountElement.textContent = totalAmount.toFixed(2);
+                tableHTML();
+
 
                 // atualiza o input escondido com os itens DEVERIA
-                items = JSON.parse(itemsInput.value);
-                items.push({
-                    product_id: selectedOption.value,
-                    price: price.toFixed(2),
-                    quantity: quantity
-                });
                 itemsInput.value = JSON.stringify(items);
-                // console.log(itemsInput.value)
+
                 // limpa os campos
                 productSelect.selectedIndex = 0;
                 quantityProductSelected.value = '';
@@ -183,9 +240,6 @@
         });
         paymentType.addEventListener('change', function() {
 
-
-
-            console.log(installmentsCountInput.value)
             if (this.value == "1") {
                 installmentNumber.style.display = "block"
                 labelDateinstallment.style.display = "flex"
@@ -209,7 +263,7 @@
             let inputs = installmentsList.querySelectorAll('input.installment-amount');
             let sum = 0;
 
-            // faz a soma atual dos valores das parcelas DEVERIA
+            // soma os valores das parcelas
             inputs.forEach(input => {
                 sum += parseFloat(input.value.replace('R$', '').trim()) || 0;
             });
@@ -227,7 +281,7 @@
                 let currentValue = parseFloat(inputs[i].value.replace('R$', '').trim()) || 0;
                 let adjustedValue = currentValue + difference;
                 if (adjustedValue >= 0) {
-                    inputs[i].value = `R$ ${adjustedValue.toFixed(2)}`;
+                    inputs[i].value = `R$ ${adjustedValue.toFixed(2)}`
                     break;
                 } else {
                     difference = adjustedValue;
@@ -236,13 +290,11 @@
             }
         }
 
-
         installmentsList.addEventListener('input', function(event) {
             if (event.target.classList.contains('installment-amount')) {
                 updateInstallmentValues();
             }
         });
-
 
         installmentsCountInput.addEventListener('input', function() {
             const count = parseInt(this.value);
@@ -270,15 +322,15 @@
                 }
             }
         });
-        // função para pegar as parcelas e datas de vencimento DEVERIA
-        function captureInstallmentsData() {
+        // função para pegar as parcelas e datas de vencimento
+        function getInstallmentsData() {
             const installments = [];
 
             // pega os campos das parcelas e das datas
             const installmentAmounts = document.querySelectorAll('input[name^="installmentValue"]');
             const installmentDueDates = document.querySelectorAll('input[name^="installmentDueDate"]');
 
-            // cria um objeto para cada parcela ou deveria
+            // cria um objeto para cada parcela
             for (let i = 0; i < installmentAmounts.length; i++) {
                 const amount = installmentAmounts[i].value.replace('R$', '').trim(); // tira R$
                 const dueDate = installmentDueDates[i].value; //data vencimento

@@ -19,6 +19,8 @@ class PaymentTypeSeeder extends Seeder
             ['name' => 'Pix'],
             ['name' => 'Transferência Bancária'],
             ['name' => 'Dinheiro'],
+            ['name' => 'Parcelado']
+
         ];
 
         foreach ($paymentTypes as $type) {

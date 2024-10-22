@@ -24,8 +24,8 @@ class CreateCustomerRequest extends FormRequest
             'document' => [
                 'required',
                 'string',
-                'min:15',
-                'max:15',
+                'min:14',
+                'max:14',
                 // Rule::unique('customers')->ignore($customerId),
             ],
             'phone' => 'required|string|min:11|max:15',

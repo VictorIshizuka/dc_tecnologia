@@ -1,10 +1,16 @@
-<x-layout>
+<x-layout title= "Detalhes - Pedido de Venda">
     <div class="container mx-auto p-4">
         <h2 class="text-3xl font-semibold mb-4">Detalhes do Pedido de Venda</h2>
 
-        @if (session('error'))
-            <div class="bg-red-500 text-white p-2 mb-4 text-center">
-                {{ session('error') }}
+
+        @if (session('success'))
+            <div class="bg-green-500 text-white p-2 mb-4 text-center">
+                {{ session('success') }}
+            </div>
+        @endif
+        @if (session('erroEdit'))
+            <div class="bg-orange-500 text-white p-2 mb-4 text-center">
+                {{ session('erroEdit') }}
             </div>
         @endif
 
@@ -22,7 +28,8 @@
                 <tr>
                     <td class="py-2 px-4 border-b text-center">{{ $saleOrderItems[0]->id }}</td>
                     <td class="py-2 px-4 border-b text-center">{{ $saleOrderItems[0]->salesOrder->user->name }}</td>
-                    <td class="py-2 px-4 border-b text-center">{{ $saleOrderItems[0]->salesOrder->customer->name }}</td>
+                    <td class="py-2 px-4 border-b text-center">{{ $saleOrderItems[0]->salesOrder->customer->name }}
+                    </td>
                     <td class="py-2 px-4 border-b text-center">{{ $saleOrderItems[0]->salesOrder->paymentType->name }}
                     </td>
                     <td class="py-2 px-4 border-b text-center">
@@ -72,7 +79,7 @@
                 @foreach ($installments as $installment)
                     <tr>
                         <td class="py-2 px-4 border-b text-center">{{ $installment->id }}</td>
-                        <td class="py-2 px-4 border-b text-center">{{ $installment->installment_number + 1 }}</td>
+                        <td class="py-2 px-4 border-b text-center">{{ $installment->installment_number }}</td>
                         <td class="py-2 px-4 border-b text-center">
                             R${{ number_format($installment->amount, 2, ',', '.') }}</td>
                         <td class="py-2 px-4 border-b text-center">

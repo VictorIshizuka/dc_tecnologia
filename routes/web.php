@@ -50,5 +50,6 @@ Route::middleware(['auth'])->group(function () {
         Route::put('{id}', [SalesOrderController::class, 'update'])->name('sales_orders.update');
         Route::delete('{id}', [SalesOrderController::class, 'destroy'])->name('sales_orders.destroy');
         Route::get('/create', [SalesOrderController::class, 'create'])->name('sales_orders.create');
+        Route::get('/create/pdf/{id}', [SalesOrderController::class, 'createPDF'])->name('generatePDF');
     });
 });
