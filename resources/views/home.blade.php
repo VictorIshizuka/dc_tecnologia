@@ -1,4 +1,4 @@
-<x-layout>
+<x-layout title="Produtos">
     <div class="container mx-auto p-4">
         <form
             action="{{ isset($productToEdit) ? route('products.update', $productToEdit->id) : route('products.store') }}"

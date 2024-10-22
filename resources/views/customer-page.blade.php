@@ -31,7 +31,7 @@
     }
 @endphp
 
-<x-layout>
+<x-layout title="Clientes">
     <div class="container mx-auto p-4">
         <form
             action="{{ isset($customerToEdit) ? route('customers.update', $customerToEdit->id) : route('customers.store') }}"

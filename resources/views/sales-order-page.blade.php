@@ -1,4 +1,4 @@
-<x-layout>
+<x-layout title="Pedidos de Venda">
     <div class="container mx-auto p-4">
         <h2 class="text-3xl font-semibold mb-4">Cadastro de Pedido de Venda</h2>
 
